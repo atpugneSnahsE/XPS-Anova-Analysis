@@ -1,0 +1,36 @@
+# ── Python ────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# ── Virtual environments (created automatically by start.sh) ──────────
+.venv/
+.anova/
+
+# ── macOS ─────────────────────────────────────────────────────────────
+.DS_Store
+
+# ── Logs ──────────────────────────────────────────────────────────────
+*.log
+xps_pipeline.log
+
+# ── Generated analysis outputs (recreate with one command) ────────────
+results/
+summary/
+figures/
+tidy_data.csv
+anova_results.csv
+tukey_results.csv
+table_*.csv
+GO_Adsorbent_ANOVA_Report.pdf
+composite boxplot panels.png
+
+# ── Raw input data ────────────────────────────────────────────────────
+# Kept in the repo by default so the one-command demo works out of the box.
+# Uncomment the lines below if you do NOT want to share your raw spectra
+# or experiment spreadsheets (e.g. proprietary instrument data).
+# FW_ xps/
+# FW_xps/
+# data/
