@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANOVA Analysis Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .upload-section {
+            margin-bottom: 30px;
+        }
+
+        .upload-area {
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9ff;
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: #f0f1ff;
+        }
+
+        .upload-area.drag-over {
+            border-color: #764ba2;
+            background: #e8e9ff;
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .upload-text {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .upload-hint {
+            color: #999;
+            font-size: 13px;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .analysis-options {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 8px;
+        }
+
+        .option-group {
+            margin-bottom: 15px;
+        }
+
+        .option-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            color: #333;
+            font-size: 14px;
+        }
+
+        input[type="radio"] {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .analyze-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .analyze-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .analyze-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .reset-btn {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .reset-btn:hover {
+            background: #d0d0d0;
+        }
+
+        .file-display {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .file-display.show {
+            display: block;
+        }
+
+        .file-name {
+            color: #2e7d32;
+            font-weight: 600;
+            word-break: break-all;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .results {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background: #e8f5e9;
+            border-radius: 8px;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .success-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .results h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+
+        .download-btn {
+            background: #4caf50;
+            color: white;
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+
+        .download-btn:hover {
+            background: #45a049;
+        }
+
+        .error {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+            border-radius: 4px;
+            color: #c62828;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #1565c0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔬 ANOVA Analysis Tool</h1>
+            <p class="subtitle">Professional XPS and ANOVA statistical analysis in one click</p>
+            <div style="margin-top: 15px;">
+                <a href="/downloads" style="color: #667eea; text-decoration: none; font-size: 13px; font-weight: 600;">
+                    📥 Download Latest Release
+                </a>
+            </div>
+        </div>
+
+        <div class="upload-section">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📊</div>
+                <div class="upload-text">Drag and drop your Excel file here</div>
+                <div class="upload-hint">or click to browse (Max 500MB)</div>
+            </div>
+            <input type="file" id="fileInput" accept=".xlsx,.xls">
+
+            <div class="file-display" id="fileDisplay">
+                <span>Selected file: </span><span class="file-name" id="fileName"></span>
+            </div>
+        </div>
+
+        <div class="analysis-options">
+            <div class="option-group">
+                <label>
+                    <input type="radio" name="analysis" value="auto" checked>
+                    <span><strong>Auto-detect</strong> - Run XPS or ANOVA based on file structure</span>
+                </label>
+            </div>
+            <div class="option-group">
+                <label>
+                    <input type="radio" name="analysis" value="xps">
+                    <span><strong>XPS Analysis</strong> - Spectral peak fitting and analysis</span>
+                </label>
+            </div>
+            <div class="option-group">
+                <label>
+                    <input type="radio" name="analysis" value="anova">
+                    <span><strong>ANOVA Analysis</strong> - Two-way statistical analysis</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <div class="loading-text">Processing your analysis... This may take a minute</div>
+        </div>
+
+        <div class="results" id="results">
+            <div class="success-icon">✅</div>
+            <h3>Analysis Complete!</h3>
+            <p>Your results are ready to download.</p>
+            <a href="#" class="download-btn" id="downloadBtn">📥 Download Results (ZIP)</a>
+        </div>
+
+        <div class="button-group" id="buttonGroup">
+            <button class="analyze-btn" id="analyzeBtn" disabled>Analyze</button>
+            <button class="reset-btn" id="resetBtn">Reset</button>
+        </div>
+
+        <div class="info-box">
+            <strong>💡 Tips:</strong><br>
+            • XPS files: Single Excel with spectral data<br>
+            • ANOVA files: 15 Excel files for adsorption data<br>
+            • Results include CSV tables, figures, and detailed reports
+        </div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileDisplay = document.getElementById('fileDisplay');
+        const fileName = document.getElementById('fileName');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const loading = document.getElementById('loading');
+        const results = document.getElementById('results');
+        const error = document.getElementById('error');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        let selectedFile = null;
+        let downloadUrl = null;
+
+        // File selection
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                selectedFile = e.target.files[0];
+                updateFileDisplay();
+            }
+        });
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('drag-over');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                selectedFile = files[0];
+                updateFileDisplay();
+            }
+        });
+
+        function updateFileDisplay() {
+            if (!selectedFile) return;
+
+            const ext = selectedFile.name.split('.').pop().toLowerCase();
+            if (!['xlsx', 'xls'].includes(ext)) {
+                showError('Only Excel files (.xlsx, .xls) are supported');
+                selectedFile = null;
+                fileDisplay.classList.remove('show');
+                analyzeBtn.disabled = true;
+                return;
+            }
+
+            fileName.textContent = selectedFile.name;
+            fileDisplay.classList.add('show');
+            analyzeBtn.disabled = false;
+            error.classList.remove('show');
+        }
+
+        analyzeBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            formData.append('type', document.querySelector('input[name="analysis"]:checked').value);
+
+            loading.classList.add('show');
+            error.classList.remove('show');
+            results.classList.remove('show');
+            analyzeBtn.disabled = true;
+
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Analysis failed');
+                }
+
+                downloadUrl = data.download_url;
+                downloadBtn.href = downloadUrl;
+
+                loading.classList.remove('show');
+                results.classList.add('show');
+
+            } catch (err) {
+                showError(err.message);
+                loading.classList.remove('show');
+            } finally {
+                analyzeBtn.disabled = false;
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            selectedFile = null;
+            fileInput.value = '';
+            fileDisplay.classList.remove('show');
+            error.classList.remove('show');
+            results.classList.remove('show');
+            loading.classList.remove('show');
+            analyzeBtn.disabled = true;
+            downloadUrl = null;
+        });
+
+        function showError(msg) {
+            error.textContent = msg;
+            error.classList.add('show');
+        }
+    </script>
+</body>
+</html>

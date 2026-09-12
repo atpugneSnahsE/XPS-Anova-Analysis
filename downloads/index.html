@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANOVA - Download Releases</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .releases-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .release-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .release-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .release-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .release-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .release-version {
+            background: #f0f0f0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #666;
+            font-family: monospace;
+        }
+
+        .release-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-latest {
+            background: #4caf50;
+            color: white;
+        }
+
+        .release-info {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .info-item {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .release-description {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .release-features {
+            background: #f8f9ff;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .release-features ul {
+            margin-left: 20px;
+            margin-top: 8px;
+        }
+
+        .release-features li {
+            margin-bottom: 4px;
+        }
+
+        .release-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .instructions {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 30px;
+        }
+
+        .instructions h3 {
+            color: #1565c0;
+            margin-bottom: 10px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            color: #1565c0;
+            line-height: 1.8;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+        }
+
+        .requirements {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 30px;
+        }
+
+        .requirements h3 {
+            color: #e65100;
+            margin-bottom: 10px;
+        }
+
+        .requirements ul {
+            margin-left: 20px;
+            color: #e65100;
+            line-height: 1.8;
+        }
+
+        .requirements li {
+            margin-bottom: 6px;
+        }
+
+        .footer {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .footer p {
+            color: #666;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .icon {
+            font-size: 20px;
+        }
+
+        code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .release-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .release-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .release-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🔬 ANOVA Analysis System</h1>
+            <p class="subtitle">Download and analyze your scientific data in minutes</p>
+            <span class="badge">📦 Ready to Use</span>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <h3>🚀 Quick Start (3 Steps)</h3>
+            <ol>
+                <li><strong>Download</strong> the ZIP file below</li>
+                <li><strong>Extract</strong> the ZIP on your computer</li>
+                <li><strong>Run</strong> the startup script below and upload your Excel file</li>
+            </ol>
+        </div>
+
+        <!-- System Requirements -->
+        <div class="requirements">
+            <h3>⚙️ System Requirements</h3>
+            <ul>
+                <li><strong>Python 3.11+</strong> (automatically checked and installed if needed)</li>
+                <li><strong>4 GB RAM</strong> minimum (8 GB recommended)</li>
+                <li><strong>1 GB free disk space</strong></li>
+                <li><strong>Windows 7+, macOS 10.13+,</strong> or modern Linux</li>
+            </ul>
+        </div>
+
+        <!-- Releases Section -->
+        <div class="releases-section">
+            <h2 style="margin-bottom: 20px; color: #333;">📥 Latest Release</h2>
+
+            <!-- Release 1.0 (Latest) -->
+            <div class="release-card">
+                <div class="release-header">
+                    <div class="release-title">
+                        <span class="icon">📦</span>
+                        ANOVA Complete Package
+                        <span class="release-version">v1.0</span>
+                        <span class="release-badge badge-latest">Latest</span>
+                    </div>
+                </div>
+
+                <div class="release-info">
+                    <div class="info-item">
+                        <span class="info-label">Released:</span> September 12, 2026
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Size:</span> 1.9 MB (core) + dependencies
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Status:</span> <span style="color: #4caf50; font-weight: 600;">Stable</span>
+                    </div>
+                </div>
+
+                <div class="release-description">
+                    Complete ANOVA analysis system with beautiful web interface.
+                    Perfect for researchers and lab managers. No technical knowledge required!
+                </div>
+
+                <div class="release-features">
+                    <strong>✨ What's Included:</strong>
+                    <ul>
+                        <li>✅ Web interface (drag & drop, modern design)</li>
+                        <li>✅ XPS spectral analysis (peak detection, fitting, figures)</li>
+                        <li>✅ ANOVA statistics (two-way analysis, effect sizes, diagnostics)</li>
+                        <li>✅ Command-line interface (for advanced users)</li>
+                        <li>✅ Startup scripts (Windows, Mac, Linux)</li>
+                        <li>✅ Complete documentation</li>
+                        <li>✅ Auto-installation (dependencies installed automatically)</li>
+                    </ul>
+                </div>
+
+                <div class="release-actions">
+                    <a href="ANOVA-v1.0.zip" class="btn btn-download">
+                        <span>📥</span> Download (1.9 MB)
+                    </a>
+                    <a href="#" onclick="alert('Release notes:\n\n✅ Web interface for non-technical users\n✅ XPS peak analysis\n✅ ANOVA statistics\n✅ Auto Python setup\n✅ Windows, Mac, Linux support'); return false;" class="btn btn-secondary">
+                        <span>📋</span> Release Notes
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Installation Instructions -->
+        <div class="releases-section">
+            <h2 style="margin-bottom: 20px; color: #333;">💻 Installation Instructions</h2>
+
+            <h3 style="margin-bottom: 12px; color: #333;">Windows Users</h3>
+            <ol style="margin-left: 20px; margin-bottom: 20px; line-height: 1.8;">
+                <li>Download the ZIP file above</li>
+                <li>Right-click → <code>Extract All</code></li>
+                <li>Open the extracted folder</li>
+                <li>Double-click <code>start_web.bat</code></li>
+                <li>Your browser opens automatically → Upload your file → Click "Analyze"</li>
+            </ol>
+
+            <h3 style="margin-bottom: 12px; color: #333;">Mac/Linux Users</h3>
+            <ol style="margin-left: 20px; margin-bottom: 20px; line-height: 1.8;">
+                <li>Download the ZIP file above</li>
+                <li>Extract the ZIP file</li>
+                <li>Open Terminal</li>
+                <li>Navigate to the folder: <code>cd /path/to/ANOVA</code></li>
+                <li>Run: <code>bash start_web.sh</code></li>
+                <li>Your browser opens automatically → Upload your file → Click "Analyze"</li>
+            </ol>
+
+            <h3 style="margin-bottom: 12px; color: #333;">Command Line (Advanced)</h3>
+            <pre style="background: #f5f5f5; padding: 12px; border-radius: 6px; overflow-x: auto;"><code># XPS analysis only
+python main.py
+
+# Full ANOVA pipeline
+bash start.sh anova</code></pre>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>📖 After extraction, read <strong>START_HERE.md</strong> for detailed guide</p>
+            <p>❓ Questions? Check <strong>WEB_SETUP_GUIDE.md</strong> in the package (has 20+ troubleshooting solutions)</p>
+            <p style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e0e0e0; color: #999; font-size: 12px;">
+                ANOVA Analysis System • Open Source • Free to Use
+            </p>
+        </div>
+    </div>
+</body>
+</html>
